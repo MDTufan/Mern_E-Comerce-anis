@@ -11,6 +11,7 @@ const { userRouter} = require('./Routers/userRouter');
 
 // midderwer
 const morgan = require('morgan');
+const { seedRouter } = require('./Routers/seedRouter');
 
 
 app.use(morgan("dev"));
@@ -20,8 +21,9 @@ app.use(bodyParser.urlencoded({ extended:true }));
 
 
 
-app.use("/api/user",userRouter)
 
+app.use("/api/user",userRouter)
+app.use("/api/seed",seedRouter)
 
 
 
