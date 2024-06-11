@@ -1,6 +1,7 @@
-
+const createError = require('http-errors')
 const User = require("../Models/userSchama");
 const { successRespon } = require("../ResponHander/responhander");
+const { default: mongoose } = require('mongoose');
 
 const getUser= async (req,res,next)=>{
 
@@ -54,4 +55,35 @@ try{
 }
 
 
-module.exports={getUser}
+const getUserbyid= async (req,res,next)=>{
+
+    try{
+        
+       const id = req.params.id;
+       const option={password:0};
+
+       const user =await User.findById(id,option);
+
+       if(!user) {throw createError(404,"User dose not exit width ihis id..")};
+            
+     return successRespon(res,{
+        statuscode:200,
+        message:"User were Return successfull",
+        payload:{
+            user,
+            
+        }
+      })
+    
+    }catch(error){
+        if(error instanceof mongoose.Error){
+            next(createError(404,"Invalid User id"))
+            return;
+        }
+        next(error)
+
+    }
+    
+    }
+
+module.exports={getUser,getUserbyid}
