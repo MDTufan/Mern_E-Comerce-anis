@@ -12,6 +12,7 @@ const { userRouter} = require('./Routers/userRouter');
 // midderwer
 const morgan = require('morgan');
 const { seedRouter } = require('./Routers/seedRouter');
+const { errorRespon } = require('./ResponHander/responhander');
 
 
 app.use(morgan("dev"));
@@ -35,8 +36,8 @@ app.use((req, res, next )=>{
 
 app.use((err,req,res,next)=>{
 
-    return res.status(err.status || 500).json({
-        success:false,
+   return errorRespon(res,
+    {   statuscode:err.status,
         message:err.message
     })
 })
