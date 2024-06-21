@@ -3,6 +3,7 @@ const User = require("../Models/userSchama");
 const { successRespon } = require("../ResponHander/responhander");
 const { default: mongoose } = require('mongoose');
 const { findWidthUserid } = require('../Services/findWidthUserId');
+const { deleteimage } = require('../Helper/deleteImage');
 
 const getUser= async (req,res,next)=>{
 
@@ -64,7 +65,7 @@ const getUserbyid= async (req,res,next)=>{
        const option={password:0};
 
 
-       const user = await findWidthUserid(id,option);
+       const user = await findWidthUserid(User,id,option);
        
             
      return successRespon(res,{
@@ -83,5 +84,41 @@ const getUserbyid= async (req,res,next)=>{
     }
     
     }
+const getDeletebyid= async (req,res,next)=>{
 
-module.exports={getUser,getUserbyid}
+    try{
+        
+       const id = req.params.id;
+       const option={password:0};
+
+
+       const user = await findWidthUserid(User,id,option);
+       
+       const userImagePath=user.images;
+
+       deleteimage(userImagePath)
+            
+
+      await User.findByIdAndDelete({
+        _id:id,
+        isAdmin:false
+    });
+
+     return successRespon(res,{
+        statuscode:200,
+        message:"User were delete successfull",
+        payload:{
+           
+            
+        }
+      })
+    
+    }catch(error){
+       
+        next(error)
+
+    }
+    
+    }
+
+module.exports={getUser,getUserbyid,getDeletebyid}

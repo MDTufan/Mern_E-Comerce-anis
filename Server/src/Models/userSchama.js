@@ -1,5 +1,6 @@
 const{Schema,model, }=require("mongoose");
 const bcrypt = require('bcryptjs');
+const { USERIMAG } = require("../secret");
 
 
 const userSchema = new Schema({
@@ -34,7 +35,7 @@ const userSchema = new Schema({
     },
     images:{
         type:String,
-        // default: Dafult_img_path,
+        default: USERIMAG,
     },
     isAdmin:{
         type:Boolean,

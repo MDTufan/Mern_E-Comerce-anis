@@ -5,15 +5,15 @@ const { default: mongoose } = require('mongoose');
 
 
 
-const findWidthUserid= async(id,option)=>{
+const findWidthUserid= async(Model,id,option={})=>{
 
     try{
 
-        const user =await User.findById(id,option);
+        const item =await Model.findById(id,option);
 
-       if(!user) {throw createError(404,"User dose not exit width ihis id..")};
+       if(!item) {throw createError(404,`${Model.modelName}item dose not exit width ihis id..`)};
 
-        return user;
+        return item;
 
     }catch(error){
         if(error instanceof mongoose.Error){
