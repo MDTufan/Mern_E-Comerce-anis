@@ -1,9 +1,12 @@
 const createError = require('http-errors')
 const User = require("../Models/userSchama");
 const { successRespon } = require("../ResponHander/responhander");
-const { default: mongoose } = require('mongoose');
+
 const { findWidthUserid } = require('../Services/findWidthUserId');
 const { deleteimage } = require('../Helper/deleteImage');
+const { JSonWebToKen } = require('../Helper/jsonWebToken');
+const { Activesion_KeY, Cline_URL } = require('../secret');
+const { sendEmailWidhtNodemiler } = require('../Helper/Email');
 
 const getUser= async (req,res,next)=>{
 
@@ -121,4 +124,61 @@ const getDeletebyid= async (req,res,next)=>{
     
     }
 
-module.exports={getUser,getUserbyid,getDeletebyid}
+    const getpostUser= async (req,res,next)=>{
+
+        try{
+            
+          const {name, email,password,phone,addresss}=req.body;
+
+           const UserExits=await User.exists({email:email}) ;
+           
+           if(UserExits){
+
+            throw createError(409,"User alredy exsit.Plase sing in..")
+           }
+
+
+        
+          const token = JSonWebToKen({name, email,password,phone,addresss},Activesion_KeY,"10m");
+
+
+          //preper Email
+
+         const EmaliData={
+            email,
+            subject:"Account Acctivion Email",
+            html:
+            `<h2>Hello ${name} !</h2>
+            <p> plase Click Here To <a href="${Cline_URL}/api/user/activte/${token}">acctive Your Account</a> </p>
+            `
+          }
+    
+          try{
+           await sendEmailWidhtNodemiler(EmaliData)
+          }catch(error){
+            next(createError(500,"send to Fild send email..."))
+            return;
+          }
+         
+         return successRespon(res,{
+            statuscode:200,
+            message:` plase go to you ${email} for conpliting your register prossce`,
+            payload:{
+                token
+                
+            }
+          })
+        
+        }catch(error){
+           
+            next(error)
+    
+        }
+        
+        }
+
+
+
+
+
+module.exports={getUser,getUserbyid,getDeletebyid,getpostUser}
